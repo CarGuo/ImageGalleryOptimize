@@ -47,12 +47,30 @@ public class TransBigImageView extends ImageView {
         margin.setMargins(x, y, x + (int) width, y + (int) height);
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(margin);
         setLayoutParams(layoutParams);
-
-        float imgHeight = getScreenWidth() * height / width;
-        tX = (getScreenWidth() - width) / 2.0f - x;
-        tY = (getScreenHeight() - height) / 2.0f - getStatusBarHeight() / 2.0f - y;
-        sX = getScreenWidth() / width;
-        sY = imgHeight / height;
+        //// TODO: 2016/11/9 修改为长图与宽图判断，但是还没判断大小是不是超过屏幕
+        if (height > width) {
+            float imgHeight;
+            float imgWidth;
+            float screenScale = (float) getScreenHeight() / getScreenWidth();
+            float imtScale = height /width;
+            if (screenScale < imtScale) {
+                imgHeight = getScreenHeight();
+                imgWidth = getScreenHeight() * width / height;
+            } else {
+                imgHeight = getScreenWidth() * height / width;
+                imgWidth = getScreenWidth();
+            }
+            tX = (getScreenWidth() - width) / 2.0f - x;
+            tY = (getScreenHeight() - height) / 2.0f - getStatusBarHeight() / 2.0f - y;
+            sX = imgWidth / width;
+            sY = imgHeight / height;
+        } else {
+            float imgHeight = getScreenWidth() * height / width;
+            tX = (getScreenWidth() - width) / 2.0f - x;
+            tY = (getScreenHeight() - height) / 2.0f - getStatusBarHeight() / 2.0f - y;
+            sX = getScreenWidth() / width;
+            sY = imgHeight / height;
+        }
     }
 
 

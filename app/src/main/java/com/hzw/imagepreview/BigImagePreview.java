@@ -63,7 +63,7 @@ public class BigImagePreview extends RelativeLayout {
         mTransSmallImageView = (TransSmallImageView) preview.findViewById(R.id.transImage);
         previewParent = (FrameLayout) preview.findViewById(R.id.previewParent);
         galleryScroll = (ScrollView) preview.findViewById(R.id.gallery_scroll);
-        transBigImageView= (TransBigImageView) preview.findViewById(R.id.transBigImage);
+        transBigImageView = (TransBigImageView) preview.findViewById(R.id.transBigImage);
     }
 
     public void init(final List<?> list, List<Integer> widthList, List<Integer> heightList,
@@ -115,7 +115,7 @@ public class BigImagePreview extends RelativeLayout {
     }
 
     public void setGalleryLoadMoreData(final List<?> list, List<Integer> widthList, List<Integer> heightList) {
-        if(list.size()==0){
+        if (list.size() == 0) {
             galleryView.setLoadMoreEnable(false);
             return;
         }
@@ -151,7 +151,24 @@ public class BigImagePreview extends RelativeLayout {
 
     private void galleryItemClick(final int x, final int y, final float width, final float height, final int position) {
         previewParent.setVisibility(VISIBLE);
-        Glide.with(mContext).load(urlList.get(position)).asBitmap().dontAnimate().into(transBigImageView);
+        float imgHeight;
+        float imgWidth;
+        if (height > width) {
+            float screenScale = (float) getScreenHeight() / getScreenWidth();
+            float imtScale = height /width;
+            if (screenScale < imtScale) {
+                imgHeight = getScreenHeight();
+                imgWidth = getScreenHeight() * width / height;
+            } else {
+                imgHeight = getScreenWidth() * height / width;
+                imgWidth = getScreenWidth();
+            }
+        } else {
+             imgHeight = getScreenWidth() * height / width;
+             imgWidth = getScreenWidth();
+        }
+
+        Glide.with(mContext).load(urlList.get(position)).override((int)imgWidth, (int)imgHeight).dontAnimate().into(transBigImageView);
         transBigImageView.init(x, y, width, height);
         transBigImageView.startTrans();
         transBigImageView.setTransEnd(new TransBigImageView.TransEnd() {
@@ -217,6 +234,11 @@ public class BigImagePreview extends RelativeLayout {
     private int getScreenWidth() {
         WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
         return wm.getDefaultDisplay().getWidth();
+    }
+
+    private int getScreenHeight() {
+        WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+        return wm.getDefaultDisplay().getHeight();
     }
 
     public interface GalleryLoadMore {

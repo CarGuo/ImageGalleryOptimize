@@ -93,7 +93,27 @@ public class TransSmallImageView extends ImageView {
             return;
         }
         setVisibility(VISIBLE);
-        float imgHeight = getScreenWidth() * height / width;
+
+
+        //// TODO: 2016/11/9 修改为长图与宽图判断，但是还没判断大小是不是超过屏幕
+        float imgHeight;
+        float imgWidth;
+        if (height > width) {
+            float screenScale = (float) getScreenHeight() / getScreenWidth();
+            float imtScale = height /width;
+            if (screenScale <  imtScale) {
+                imgHeight = getScreenHeight();
+                imgWidth = getScreenHeight() * width / height;
+            } else {
+                imgHeight = getScreenWidth() * height / width;
+                imgWidth = getScreenWidth();
+            }
+        } else {
+            imgHeight = getScreenWidth() * height / width;
+            imgWidth = getScreenWidth();
+        }
+
+
         float dy = getResources().getDisplayMetrics().density * 4.0f + 0.5f;
         AnimatorSet set = new AnimatorSet();
         ObjectAnimator animator = ObjectAnimator.ofInt(getParent(), "backgroundColor",
@@ -103,7 +123,7 @@ public class TransSmallImageView extends ImageView {
                 ObjectAnimator.ofFloat(this, "translationX", 0, x - (getScreenWidth() - width) / 2.0f),
                 ObjectAnimator.ofFloat(this, "translationY", 0, y - (getScreenHeight() - height) / 2.0f
                         - getStatusBarHeight() / 3.0f - dy),
-                ObjectAnimator.ofFloat(this, "scaleX", 1, width / getScreenWidth()),
+                ObjectAnimator.ofFloat(this, "scaleX", 1, width / imgWidth),
                 ObjectAnimator.ofFloat(this, "scaleY", 1, height / imgHeight), animator
         );
         set.setDuration(400);
