@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.PointF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
@@ -37,7 +38,8 @@ public class BigImagePreview extends RelativeLayout {
     private int lineWidth, lineHeight, loadMoreHeight;
     private ViewPagerAdapter mAdapter;
     private ScrollView galleryScroll;
-    private int position;
+    private int position; //viewpager的位置
+    private int gridPosition; //瀑布流点击的那个位置
 
     public BigImagePreview(Context context) {
         super(context);
@@ -78,12 +80,20 @@ public class BigImagePreview extends RelativeLayout {
         mTransSmallImageView.setExitEnd(new TransSmallImageView.ExitEnd() {
             @Override
             public void end() {
+                galleryView.getChildAt(gridPosition).setVisibility(VISIBLE);
                 previewParent.setVisibility(GONE);
             }
         });
         galleryView.setItemClickListener(new GalleryView.ItemClickListener() {
             @Override
-            public void click(int x, int y, float width, float height, int position) {
+            public void click(int x, int y, float width, float height, final int position) {
+                gridPosition = position;
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        galleryView.getChildAt(position).setVisibility(INVISIBLE);
+                    }
+                }, 200);
                 galleryItemClick(x, y, width, height, position);
             }
         });
@@ -240,6 +250,11 @@ public class BigImagePreview extends RelativeLayout {
     }
 
     public void TransSmallImageViewToExit(int position) {
+        if (position != gridPosition) {
+            galleryView.getChildAt(gridPosition).setVisibility(VISIBLE);
+            galleryView.getChildAt(position).setVisibility(INVISIBLE);
+            gridPosition = position;
+        }
         pager.setVisibility(View.GONE);
         List<Float> info = galleryView.getChildInfo(position);
         mTransSmallImageView.exit((int) (info.get(0) / 1),
