@@ -37,6 +37,7 @@ public class BigImagePreview extends RelativeLayout {
     private int lineWidth, lineHeight, loadMoreHeight;
     private ViewPagerAdapter mAdapter;
     private ScrollView galleryScroll;
+    private int position;
 
     public BigImagePreview(Context context) {
         super(context);
@@ -93,6 +94,7 @@ public class BigImagePreview extends RelativeLayout {
 
             @Override
             public void onPageSelected(int position) {
+                BigImagePreview.this.position = position;
                 int w = galleryView.getChildAt(position).getWidth();
                 int h = galleryView.getChildAt(position).getHeight();
                 Glide.with(mContext).load(urlList.get(position))
@@ -212,10 +214,7 @@ public class BigImagePreview extends RelativeLayout {
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    pager.setVisibility(View.GONE);
-                    List<Float> info = galleryView.getChildInfo(i);
-                    mTransSmallImageView.exit((int) (info.get(0) / 1),
-                            (int) (info.get(1) / 1), info.get(2), info.get(3));
+                    TransSmallImageViewToExit(i);
                 }
             });
             return imageView;
@@ -232,5 +231,18 @@ public class BigImagePreview extends RelativeLayout {
         this.mLoadMore = loadMore;
     }
 
+    public ViewPager getPager() {
+        return pager;
+    }
 
+    public int getViewPagerCurPosition() {
+        return position;
+    }
+
+    public void TransSmallImageViewToExit(int position) {
+        pager.setVisibility(View.GONE);
+        List<Float> info = galleryView.getChildInfo(position);
+        mTransSmallImageView.exit((int) (info.get(0) / 1),
+                (int) (info.get(1) / 1), info.get(2), info.get(3));
+    }
 }

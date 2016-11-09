@@ -3,6 +3,7 @@ package com.hzw.imagepreview;
 import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,4 +65,12 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        if (mPreview.getPager().getVisibility() == View.VISIBLE) {
+            mPreview.TransSmallImageViewToExit(mPreview.getViewPagerCurPosition());
+        } else {
+            super.onBackPressed();
+        }
+    }
 }
