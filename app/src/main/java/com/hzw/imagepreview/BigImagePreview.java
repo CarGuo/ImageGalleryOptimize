@@ -1,6 +1,7 @@
 package com.hzw.imagepreview;
 
 import android.content.Context;
+import android.graphics.PointF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.v4.view.PagerAdapter;
@@ -151,24 +152,11 @@ public class BigImagePreview extends RelativeLayout {
 
     private void galleryItemClick(final int x, final int y, final float width, final float height, final int position) {
         previewParent.setVisibility(VISIBLE);
-        float imgHeight;
-        float imgWidth;
-        if (height > width) {
-            float screenScale = (float) getScreenHeight() / getScreenWidth();
-            float imtScale = height /width;
-            if (screenScale < imtScale) {
-                imgHeight = getScreenHeight();
-                imgWidth = getScreenHeight() * width / height;
-            } else {
-                imgHeight = getScreenWidth() * height / width;
-                imgWidth = getScreenWidth();
-            }
-        } else {
-             imgHeight = getScreenWidth() * height / width;
-             imgWidth = getScreenWidth();
-        }
+        PointF pointF = CommonUtil.getNeedSize(mContext, width, height);
+        float imgHeight = pointF.y;
+        float imgWidth = pointF.x;
 
-        Glide.with(mContext).load(urlList.get(position)).override((int)imgWidth, (int)imgHeight).dontAnimate().into(transBigImageView);
+        Glide.with(mContext).load(urlList.get(position)).override((int) imgWidth, (int) imgHeight).dontAnimate().into(transBigImageView);
         transBigImageView.init(x, y, width, height);
         transBigImageView.startTrans();
         transBigImageView.setTransEnd(new TransBigImageView.TransEnd() {
@@ -210,12 +198,15 @@ public class BigImagePreview extends RelativeLayout {
             container.addView(imageView);
             //指定要加载的图片大小，防止OOM
             List<Float> info = galleryView.getChildInfo(i);
-            int w = getScreenWidth();
-            int h = (int) (getScreenWidth() * info.get(3) / info.get(2));
+
+            PointF pointF = CommonUtil.getNeedSize(mContext, info.get(2), info.get(3));
+            float imgHeight = pointF.y;
+            float imgWidth = pointF.x;
+
             //使用GalleryView子View上的图片作为占位图，不然会出现加载闪白
             galleryView.getChildAt(i).setDrawingCacheEnabled(true);
             Drawable drawable = new BitmapDrawable(galleryView.getChildAt(i).getDrawingCache());
-            Glide.with(mContext).load(list.get(i)).override(w, h)
+            Glide.with(mContext).load(list.get(i)).override((int) imgWidth, (int) imgHeight)
                     .dontAnimate().placeholder(drawable).into(imageView);
             //Item点击事件
             imageView.setOnClickListener(new View.OnClickListener() {
@@ -229,16 +220,6 @@ public class BigImagePreview extends RelativeLayout {
             });
             return imageView;
         }
-    }
-
-    private int getScreenWidth() {
-        WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
-        return wm.getDefaultDisplay().getWidth();
-    }
-
-    private int getScreenHeight() {
-        WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
-        return wm.getDefaultDisplay().getHeight();
     }
 
     public interface GalleryLoadMore {

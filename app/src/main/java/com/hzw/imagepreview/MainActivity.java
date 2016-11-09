@@ -7,6 +7,8 @@ import android.os.Bundle;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.hzw.imagepreview.CommonUtil.dip2px;
+
 public class MainActivity extends AppCompatActivity {
 
     private BigImagePreview mPreview;
@@ -45,26 +47,21 @@ public class MainActivity extends AppCompatActivity {
             mUrlList.add(img[i]);
         }
         mPreview.init(mUrlList, mImgWidthList, mImgHeightList,
-                (int) dip2px(4), (int) dip2px(4), (int) dip2px(60));
+                (int) dip2px(this, 4), (int) dip2px(this, 4), (int) dip2px(this, 60));
 
         mPreview.setGalleryLoadMore(new BigImagePreview.GalleryLoadMore() {
             @Override
             public void loadMore() {
-                if(times>1){
+                if (times > 1) {
                     mUrlList.clear();
                     mPreview.setGalleryLoadMoreData(mUrlList, mImgWidthList, mImgHeightList);
-                }else{
+                } else {
                     mPreview.setGalleryLoadMoreData(mUrlList, mImgWidthList, mImgHeightList);
                 }
                 times++;
             }
         });
 
-    }
-
-    private float dip2px(float dipValue) {
-        final float scale = getResources().getDisplayMetrics().density;
-        return dipValue * scale + 0.5f;
     }
 
 }

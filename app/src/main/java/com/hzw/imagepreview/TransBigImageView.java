@@ -7,6 +7,7 @@ import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.PointF;
 import android.util.AttributeSet;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
@@ -49,17 +50,9 @@ public class TransBigImageView extends ImageView {
         setLayoutParams(layoutParams);
         //// TODO: 2016/11/9 修改为长图与宽图判断，但是还没判断大小是不是超过屏幕
         if (height > width) {
-            float imgHeight;
-            float imgWidth;
-            float screenScale = (float) getScreenHeight() / getScreenWidth();
-            float imtScale = height /width;
-            if (screenScale < imtScale) {
-                imgHeight = getScreenHeight();
-                imgWidth = getScreenHeight() * width / height;
-            } else {
-                imgHeight = getScreenWidth() * height / width;
-                imgWidth = getScreenWidth();
-            }
+            PointF pointF = CommonUtil.getNeedSize(mContext, width, height);
+            float imgHeight = pointF.y;
+            float imgWidth = pointF.x;
             tX = (getScreenWidth() - width) / 2.0f - x;
             tY = (getScreenHeight() - height) / 2.0f - getStatusBarHeight() / 2.0f - y;
             sX = imgWidth / width;

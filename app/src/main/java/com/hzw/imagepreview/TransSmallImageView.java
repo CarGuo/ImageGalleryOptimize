@@ -7,6 +7,7 @@ import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.PointF;
 import android.util.AttributeSet;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -94,25 +95,9 @@ public class TransSmallImageView extends ImageView {
         }
         setVisibility(VISIBLE);
 
-
-        //// TODO: 2016/11/9 修改为长图与宽图判断，但是还没判断大小是不是超过屏幕
-        float imgHeight;
-        float imgWidth;
-        if (height > width) {
-            float screenScale = (float) getScreenHeight() / getScreenWidth();
-            float imtScale = height /width;
-            if (screenScale <  imtScale) {
-                imgHeight = getScreenHeight();
-                imgWidth = getScreenHeight() * width / height;
-            } else {
-                imgHeight = getScreenWidth() * height / width;
-                imgWidth = getScreenWidth();
-            }
-        } else {
-            imgHeight = getScreenWidth() * height / width;
-            imgWidth = getScreenWidth();
-        }
-
+        PointF pointF = CommonUtil.getNeedSize(mContext, width, height);
+        float imgHeight = pointF.y;
+        float imgWidth = pointF.x;
 
         float dy = getResources().getDisplayMetrics().density * 4.0f + 0.5f;
         AnimatorSet set = new AnimatorSet();

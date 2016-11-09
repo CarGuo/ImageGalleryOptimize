@@ -13,6 +13,10 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.hzw.imagepreview.CommonUtil.dip2px;
+import static com.hzw.imagepreview.CommonUtil.getScreenWidth;
+import static com.hzw.imagepreview.CommonUtil.sp2px;
+
 /**
  * 特殊的瀑布流
  * Created by 何志伟 on 2016/4/18.
@@ -62,7 +66,7 @@ public class GalleryView extends ViewGroup {
         createLoadMore();
         this.imgWidthList.addAll(wList);
         this.imgHeightList.addAll(hList);
-        this.imgWidthList.add(getScreenWidth());
+        this.imgWidthList.add(getScreenWidth(mContext));
         this.imgHeightList.add(loadMoreHeight);
         this.lineSpaceWidth = spaceW;
         this.lineSpaceHeight = spaceH;
@@ -78,16 +82,16 @@ public class GalleryView extends ViewGroup {
         //遍历每个子View,计算父View的高
         for (int i = imgHeightList.size() - wList.size() - 1; i < childCount; i++) {
             //最后一行时，无论怎样都让它的值超出屏宽
-            lineWidth = i >= imgWidthList.size() - 2 ? getScreenWidth() : lineWidth;
+            lineWidth = i >= imgWidthList.size() - 2 ? getScreenWidth(mContext) : lineWidth;
             //计算每一行的固定高度，以便计算ViewGroup的高度，这里减去多余的一个分割线宽
-            if (lineWidth + imgWidthList.get(i) - lineSpaceWidth >= getScreenWidth()) {
+            if (lineWidth + imgWidthList.get(i) - lineSpaceWidth >= getScreenWidth(mContext)) {
                 //每行子View的宽度相加的和大于屏宽时
                 float childWH = 0;//初始化宽高比之和
                 for (int j = index; j <= i; j++) {//计算该行每张图的宽高比之和
                     childWH += imgWidthList.get(j) / (float) imgHeightList.get(j);
                 }
                 //计算每行的实际高度
-                lineHeight = (getScreenWidth() - (i - index) * lineSpaceWidth) / childWH;
+                lineHeight = (getScreenWidth(mContext) - (i - index) * lineSpaceWidth) / childWH;
                 //父View的高等于每一行的高度和两行间的分割线高度相加
                 height += lineHeight + lineSpaceHeight;
                 //重置lineWidth(每行子View的宽度相加的和)
@@ -107,10 +111,10 @@ public class GalleryView extends ViewGroup {
         mLoadMore.setBackground(new ColorDrawable(Color.parseColor("#40000000")));
         mLoadMore.setText("查看更多...");
         addView(mLoadMore);
-        mLoadMore.getLayoutParams().width = getScreenWidth();
+        mLoadMore.getLayoutParams().width = getScreenWidth(mContext);
         mLoadMore.getLayoutParams().height = loadMoreHeight;
         mLoadMore.setGravity(Gravity.CENTER);
-        mLoadMore.setPadding(0, loadMoreHeight / 2 - sp2px(8), 0, 0);
+        mLoadMore.setPadding(0, loadMoreHeight / 2 - sp2px(mContext, 8), 0, 0);
 
         mLoadMore.setOnClickListener(new OnClickListener() {
             @Override
@@ -140,10 +144,10 @@ public class GalleryView extends ViewGroup {
 
         int height = parentHeight - updateHeight == 0 ? (int) parentHeight - lineSpaceHeight :
                 (int) parentHeight - lineSpaceHeight * (updateTimes) - (updateTimes - 1) *
-                        loadMoreHeight - (updateTimes - 1) * (int) dip2px(2.0f);
+                        loadMoreHeight - (updateTimes - 1) * (int) dip2px(mContext, 2.0f);
         height = isLoadMoreEnable ? height : height - loadMoreHeight - lineSpaceHeight;
         //实际高度减去多余一条分割线高
-        setMeasuredDimension((widthMode == MeasureSpec.EXACTLY) ? sizeWidth : getScreenWidth(),
+        setMeasuredDimension((widthMode == MeasureSpec.EXACTLY) ? sizeWidth : getScreenWidth(mContext),
                 (heightMode == MeasureSpec.EXACTLY) ? sizeHeight : height);
     }
 
@@ -152,7 +156,7 @@ public class GalleryView extends ViewGroup {
         //设置子view的位置，这里通过View的margin属性设置View在屏幕上的位置
         int height = parentHeight - updateHeight == 0 ? 0 : //上几行的总高度
                 (int) (parentHeight - lineSpaceHeight * (updateTimes - 1) - (updateTimes - 1) *
-                        loadMoreHeight - updateHeight) - (updateTimes - 1) * (int) dip2px(2.0f);
+                        loadMoreHeight - updateHeight) - (updateTimes - 1) * (int) dip2px(mContext, 2.0f);
         float lineHeight;//每行的实际高度
         int lineWidth = 0;//每行子View的宽度相加的和
         int index = imgWidthList.size() - (isLoadMoreEnable ? updateSize : updateSize - 1);//上一行结束时的view
@@ -161,16 +165,16 @@ public class GalleryView extends ViewGroup {
         for (int i = index; i < imgWidthList.size(); i++) {
             //最后一行时，无论怎样都让它的值超出屏宽
             lineWidth = i >= (isLoadMoreEnable ? imgWidthList.size() - 2
-                    : imgWidthList.size() - 1) ? getScreenWidth() : lineWidth;
+                    : imgWidthList.size() - 1) ? getScreenWidth(mContext) : lineWidth;
             //还是计算每行的实际高度
-            if (lineWidth + imgWidthList.get(i) - lineSpaceWidth >= getScreenWidth()) {
+            if (lineWidth + imgWidthList.get(i) - lineSpaceWidth >= getScreenWidth(mContext)) {
                 //每行子View的宽度相加的和大于屏宽时
                 float childWH = 0;//初始化宽高比之和
                 for (int j = index; j <= i; j++) {//计算该行每张图的宽高比之和
                     childWH += imgWidthList.get(j) / (float) imgHeightList.get(j);
                 }
                 //计算每行的实际高度
-                lineHeight = (getScreenWidth() - (i - index) * lineSpaceWidth) / childWH;
+                lineHeight = (getScreenWidth(mContext) - (i - index) * lineSpaceWidth) / childWH;
                 //获取了每行的高度后设置childView的实际宽高
                 for (int j = index; j <= i; j++) {
                     if (getChildAt(j).getVisibility() != GONE) {
@@ -183,7 +187,7 @@ public class GalleryView extends ViewGroup {
                         }
                         int left = lineWidth;
                         int top = height;
-                        int right = j == i ? getScreenWidth() : left + childWidth;
+                        int right = j == i ? getScreenWidth(mContext) : left + childWidth;
                         int bottom = height + (int) lineHeight;
                         getChildAt(j).layout(left, top, right, bottom);
                     }
@@ -221,11 +225,6 @@ public class GalleryView extends ViewGroup {
         imgHeightList.remove(imgHeightList.size() - 1);
     }
 
-    private int getScreenWidth() {
-        WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
-        return wm.getDefaultDisplay().getWidth();
-    }
-
     private synchronized static boolean isFastClick() {
         lastClickTime = System.currentTimeMillis();
         if (lastClickTime - time < 500) {
@@ -233,16 +232,6 @@ public class GalleryView extends ViewGroup {
         }
         time = lastClickTime;
         return false;
-    }
-
-    private float dip2px(float dipValue) {
-        final float scale = mContext.getResources().getDisplayMetrics().density;
-        return dipValue * scale + 0.5f;
-    }
-
-    private int sp2px(float spValue) {
-        float fontScale = mContext.getResources().getDisplayMetrics().scaledDensity;
-        return (int) (spValue * fontScale + 0.5f);
     }
 
     //常用公用方法
