@@ -10,7 +10,7 @@
 
 <h4>后面考虑吧对应的放大缩小双击功能补上 </h4>
 
-<h4>原作者链接 https://github.com/HzwSunshine/ImageGallery </h4>
+<h4>原作者链接博客 http://blog.csdn.net/hzwailll/article/details/51336871 </h4>
 
 
 
