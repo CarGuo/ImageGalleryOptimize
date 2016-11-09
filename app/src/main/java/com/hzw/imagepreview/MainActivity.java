@@ -29,12 +29,12 @@ public class MainActivity extends AppCompatActivity {
                 R.mipmap.xxx9, R.mipmap.xxx10, R.mipmap.xxx11, R.mipmap.xxx12, R.mipmap.xxx13,
                 R.mipmap.xxx14, R.mipmap.xxx15, R.mipmap.xxx16, R.mipmap.xxx17, R.mipmap.xxx18,
                 R.mipmap.xxx19, R.mipmap.xxx20, R.mipmap.xxx21, R.mipmap.xxx22, R.mipmap.xxx23,
-                R.mipmap.xxx24, R.mipmap.xxx25};
+                R.mipmap.xxx24, R.mipmap.xxx25, R.mipmap.ffg, R.mipmap.ffh, R.mipmap.ffj};
 
         BitmapFactory.Options opts = new BitmapFactory.Options();
         opts.inJustDecodeBounds = true;
         opts.inSampleSize = 1;
-        opts.inJustDecodeBounds = false;
+        //opts.inJustDecodeBounds = false;
         mUrlList = new ArrayList<>();
         for (int i = 0; i < img.length; i++) {
             BitmapFactory.decodeResource(getResources(), img[i], opts);
