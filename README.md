@@ -15,7 +15,6 @@
 <h4>4、貌似因为photoview的缘故，目前必须是appcompat-v7:24.2.0，否则成功装入后会有java.lang.NoSuchMethodError，这个或者可以降低photoView
 的版本解决</h4>
 
-<h4>原作者链接博客 http://blog.csdn.net/hzwailll/article/details/51336871 </h4>
 
 
 
