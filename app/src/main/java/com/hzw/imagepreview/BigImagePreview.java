@@ -237,6 +237,7 @@ public class BigImagePreview extends RelativeLayout {
             attacher.setOnViewTapListener(new PhotoViewAttacher.OnViewTapListener() {
                 @Override
                 public void onViewTap(View view, float x, float y) {
+                    attacher.setScale(1, false);
                     TransSmallImageViewToExit(i);
                 }
             });
