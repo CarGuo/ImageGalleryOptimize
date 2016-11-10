@@ -18,9 +18,14 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import uk.co.senab.photoview.PhotoViewAttacher;
 
 /**
  * 大图预览界面
@@ -30,7 +35,7 @@ public class BigImagePreview extends RelativeLayout {
 
     private Context mContext;
     private GalleryView galleryView;
-    private ViewPager pager;
+    private PhotoViewPager pager;
     private TransSmallImageView mTransSmallImageView;
     private TransBigImageView transBigImageView;
     private FrameLayout previewParent;
@@ -63,7 +68,7 @@ public class BigImagePreview extends RelativeLayout {
         //获取布局
         View preview = LayoutInflater.from(mContext).inflate(R.layout.gallery_preview, this);
         galleryView = (GalleryView) preview.findViewById(R.id.gallery);
-        pager = (ViewPager) preview.findViewById(R.id.preview_viewPager);
+        pager = (PhotoViewPager) preview.findViewById(R.id.preview_viewPager);
         mTransSmallImageView = (TransSmallImageView) preview.findViewById(R.id.transImage);
         previewParent = (FrameLayout) preview.findViewById(R.id.previewParent);
         galleryScroll = (ScrollView) preview.findViewById(R.id.gallery_scroll);
@@ -215,18 +220,27 @@ public class BigImagePreview extends RelativeLayout {
             float imgHeight = pointF.y;
             float imgWidth = pointF.x;
 
+            final PhotoViewAttacher attacher = new PhotoViewAttacher(imageView);
+
             //使用GalleryView子View上的图片作为占位图，不然会出现加载闪白
             galleryView.getChildAt(i).setDrawingCacheEnabled(true);
             Drawable drawable = new BitmapDrawable(galleryView.getChildAt(i).getDrawingCache());
             Glide.with(mContext).load(list.get(i)).override((int) imgWidth, (int) imgHeight)
-                    .dontAnimate().placeholder(drawable).into(imageView);
-            //Item点击事件
-            imageView.setOnClickListener(new View.OnClickListener() {
+                    .dontAnimate().placeholder(drawable).into(new GlideDrawableImageViewTarget(imageView) {
                 @Override
-                public void onClick(View v) {
+                public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> animation) {
+                    super.onResourceReady(resource, animation);
+                    attacher.update();
+                }
+            });
+
+            attacher.setOnViewTapListener(new PhotoViewAttacher.OnViewTapListener() {
+                @Override
+                public void onViewTap(View view, float x, float y) {
                     TransSmallImageViewToExit(i);
                 }
             });
+
             return imageView;
         }
     }
