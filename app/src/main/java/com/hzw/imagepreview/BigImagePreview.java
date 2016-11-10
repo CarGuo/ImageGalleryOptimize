@@ -98,7 +98,7 @@ public class BigImagePreview extends RelativeLayout {
                     public void run() {
                         galleryView.getChildAt(position).setVisibility(INVISIBLE);
                     }
-                }, 200);
+                }, 100);
                 galleryItemClick(x, y, width, height, position);
             }
         });
